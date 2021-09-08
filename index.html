@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+    <title>Diagnostico PWA - Lista</title>
+</head>
+<body>
+    <div class="container">
+        <hr>
+        <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#modalRegistro">Registrar</button>
+        <hr>
+        <table class="table" id="table-users">
+            <thead>
+                <tr>
+                    <th scope="col">#</th>
+                    <th scope="col">First Name</th>
+                    <th scope="col">Last Name</th>
+                    <th scope="col">Email</th>
+                    <th scope="col">Avatar</th>
+                </tr>
+            </thead>
+        </table>
+
+        <!-- Modal registro -->
+        <div class="modal fade" id="modalRegistro" tabindex="-1" aria-labelledby="modalRegistroLabel" aria-hidden="true">
+            <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                <h5 class="modal-title" id="modalRegistroLabel">Registro usuario</h5>
+                <button type="button" class="btn-close" id="close-modal" data-bs-dismiss="modal" aria-label="Close" onclick=""></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label for="exampleInputEmail1" class="form-label">Correo electrónico</label>
+                        <input type="email" class="form-control" id="email">
+                    </div>
+                    <div class="mb-3">
+                        <label for="exampleInputPassword1" class="form-label">Contraseña</label>
+                        <input type="password" class="form-control" id="password">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                <button type="button" class="btn btn-primary" onclick="register()">Registrar</button>
+                </div>
+            </div>
+            </div>
+        </div>
+    </div>
+</body>
+<script src="js/bootstrap.bundle.min.js"></script>
+<script>
+    fetch('https://reqres.in/api/users')
+        .then(response => response.json())
+        .then(response => addRows(response.data));
+
+    function addRows(users) {
+        let table = document.getElementById("table-users");
+        
+
+        for (let i = 0; i < users.length; i++) {
+            let rows = document.getElementById("table-users").rows.length;
+            let row = table.insertRow();
+
+            let id = row.insertCell(0);
+            let firstName = row.insertCell(1);
+            let lastName = row.insertCell(2);
+            let email = row.insertCell(3);
+            let avatar = row.insertCell(4);
+
+            id.innerHTML = rows;
+            firstName.innerHTML = users[i].first_name;
+            lastName.innerHTML = users[i].last_name;
+            email.innerHTML = users[i].email;
+            avatar.innerHTML = "<img src='"+users[i].avatar+"' width='100' height='100' />";
+        }
+    }
+    
+    function register() {
+        let email = document.getElementById("email").value;
+        let password = document.getElementById("password").value;
+
+
+        if (email != "" && password != "") {
+            let url = 'https://reqres.in/api/register';
+            let data = {
+                email: email, 
+                password: password
+            };
+
+            let registerRow = new Request(url, {
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json'
+                },
+                method: 'POST', 
+                body: JSON.stringify(data)
+            });
+
+            fetch(registerRow)
+                .then(response => response.json())
+                .then(response => {
+                    alert("Nuevo ID: "+response.id)
+                    return fetch('https://reqres.in/api/users/'+response.id)
+                })
+                .then(response => response.json())
+                .then(response => {
+                    addRows([response.data])
+                    document.getElementById("close-modal").click();
+                })
+        } else {
+            alert("Se deben de llenar todos los campos")
+        }
+    }
+
+</script>
+
+</html>

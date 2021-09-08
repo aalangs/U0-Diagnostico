@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+    <title>Diagnostico PWA - Registro</title>
+</head>
+
+<body>
+    <div class="container">
+        <br>
+        <div class="mb-3">
+            <label for="exampleInputEmail1" class="form-label">Correo electrónico</label>
+            <input type="email" class="form-control" id="email">
+        </div>
+        <div class="mb-3">
+            <label for="exampleInputPassword1" class="form-label">Contraseña</label>
+            <input type="password" class="form-control" id="password">
+        </div>
+        <button type="button" class="btn btn-primary" onclick="register()">Registrar</button>
+    </div>
+</body>
+<script src="js/bootstrap.bundle.min.js"></script>
+<script>
+
+    function register() {
+        let email = document.getElementById("email").value;
+        let password = document.getElementById("password").value;
+
+        if (email != "" && password != "") {
+            let url = 'https://reqres.in/api/register';
+            let data = {
+                email: email, 
+                password: password
+            };
+
+            let registerRow = new Request(url, {
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json'
+                },
+                method: 'POST', 
+                body: JSON.stringify(data)
+            });
+
+            fetch(registerRow)
+                .then(response => response.json())
+                .then(response => console.log(response));
+        } else {
+            alert("Se deben de llenar todos los campos")
+        }
+    }
+</script>
+</html>
